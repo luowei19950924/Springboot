@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+    <contextName>logback</contextName>
+    <!--定义变量-->
+    <property name="log.path" value="E:\\springboot\info.log"/>
+    <!--输出控制台-->
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <!--过滤日志级别-->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <encoder>
+            <pattern>%d{yyyy/MM/dd-HH:mm} [%thread] %-5level %logger- %msg%n</pattern>
+        </encoder>
+    </appender>
+    <!--输出到文件-->
+    <appender name="file">
+        <file>${log.path}</file>
+        <!--日志文件切割策略-->
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!--每天一个文件-->
+            <fileNamePattern>logback.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!--保留最近30天的日志文件-->
+            <maxHistory>30</maxHistory>
+            <!--文件上限，超过删除-->
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{yyyy/MM/dd-HH:mm} [%thread] %-5level %logger- %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="console"/>
+        <appender-ref ref="file"/>
+    </root>
+    <!--指定日志包打印级别-->
+    <logger name="com.example.springboot"/>
+    <!--指定日志类打印级别 additivity：是否向上级传递-->
+    <logger name="com.example.springboot.IOTest" level="WARN" additivity="false">
+        <appender-ref ref="console"/>
+    </logger>
+    <!--测试环境+开发环境，多个使用逗号隔开-->
+    <springProfile name="prod">
+        <logger name="com.example.springboot.IOTest" level="WARN"/>
+    </springProfile>
+    <springProfile name="test,dev">
+        <logger name="com.example.springboot.IOTest" level="WARN"/>
+    </springProfile>
+</configuration>
